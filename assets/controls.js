@@ -14,6 +14,8 @@ const prevBtn = $('.btn-prev')
 const randomBtn = $('.btn-random')
 const repeatBtn = $('.btn-repeat')
 const playlist = $('.playlist')
+const playPromise = audio.play();
+
 
 const app = {
     currentIndex: 0,
@@ -113,7 +115,14 @@ const app = {
             if (_this.isPlaying) {
                 audio.pause();
             } else {
-                audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(function() {
+                        audio.play();
+                    }).catch(function(error) {
+                        console.log("x")
+                    });
+                }
+
             }
         }
 
