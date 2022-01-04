@@ -115,14 +115,8 @@ const app = {
             if (_this.isPlaying) {
                 audio.pause();
             } else {
-                if (playPromise !== undefined) {
-                    playPromise.then(function() {
-                        audio.play();
-                    }).catch(function(error) {
-                        console.log("x")
-                    });
-                }
-
+                window.focus()
+                audio.play();
             }
         }
 
