@@ -7,6 +7,8 @@ const cd = $('.cd');
 const playBtn = $('.btn-toggle-play')
 const player = $('.player');
 const progress = $('#progress');
+const nextBtn = $('.btn-next');
+const prevBtn = $('.btn-prev')
 const app = {
     currentIndex: 0,
     isPlaying: false,
@@ -50,7 +52,7 @@ const app = {
             name: "Daydreams",
             singer: "Soobin Hoàng Sơn",
             path: "https://vnso-zn-23-tf-mp3-s1-zmp3.zadn.vn/3a687f38ea7c03225a6d/7092920429194289341?authen=exp=1641400287~acl=/3a687f38ea7c03225a6d/*~hmac=b6eefcc1ad5d7e4265a79303bd41b06a&fs=MTY0MTIyNzQ4NzA0MHx3ZWJWNnwwfDExOC42OS4zNS4xMjmUsI",
-            image: "https://www.google.com/imgres?imgurl=https%3A%2F%2Fvnn-imgs-f.vgcloud.vn%2F2019%2F02%2F22%2F09%2Fimg-3722.jpg&imgrefurl=https%3A%2F%2Fvietnamnet.vn%2Fvn%2Fgiai-tri%2Fnhac%2Fsoobin-hoang-son-lot-xac-o-liveshow-moi-509447.html&tbnid=o2XhH0JjhlaHTM&vet=12ahUKEwj4guG8gpb1AhVchdgFHSTnCxIQMygCegUIARCeAQ..i&docid=5Wzp0zKGTJFzqM&w=800&h=800&itg=1&q=soobin&ved=2ahUKEwj4guG8gpb1AhVchdgFHSTnCxIQMygCegUIARCeAQ"
+            image: "https://znews-photo.zadn.vn/w660/Uploaded/qfssu/2021_07_16/avasoo.jpg"
         }
     ],
     render: function() {
@@ -80,6 +82,14 @@ const app = {
     handleEvents: function() {
         const _this = this;
         const cdWidth = cd.offsetWidth;
+
+        const cdThumbAnimate = cdThumb.animate([{ transform: 'rotate(360deg)' }], {
+            duration: 10000,
+            iterations: Infinity
+        })
+        cdThumbAnimate.pause();
+
+        console.log(cdThumbAnimate)
         document.onscroll = function() {
             const scrollTop = window.scrollY || document.documentElement.scrollTop
             const newCdWidth = cdWidth - scrollTop;
@@ -93,26 +103,32 @@ const app = {
             } else {
                 audio.play();
             }
-            audio.onplay = function() {
-                _this.isPlaying = true
-                player.classList.add('playing')
+        }
+        audio.onplay = function() {
+            _this.isPlaying = true
+            player.classList.add('playing')
+            cdThumbAnimate.play();
 
+        }
+        audio.onpause = function() {
+            _this.isPlaying = false
+            player.classList.remove('playing')
+            cdThumbAnimate.pause();
+        }
+        audio.ontimeupdate = function() {
+            if (audio.duration) {
+                const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
+                progress.value = progressPercent;
             }
-            audio.onpause = function() {
-                _this.isPlaying = false
-                player.classList.remove('playing')
-            }
-            audio.ontimeupdate = function() {
-                if (audio.duration) {
-                    const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
-                    progress.value = progressPercent;
-                }
 
-            }
-            progress.onchange = function(e) {
-                const seekTime = audio.duration / 100 * e.target.value;
-                audio.currentTime = seekTime;
-            }
+        }
+        progress.onchange = function(e) {
+            const seekTime = audio.duration / 100 * e.target.value;
+            audio.currentTime = seekTime;
+        }
+        nextBtn.onclick = function() {
+            _this.nextSong()
+            audio.play();
         }
     },
     loadCurrentSong: function() {
@@ -121,7 +137,20 @@ const app = {
         cdThumb.style.backgroundImage = `url(${this.currentSong.image})`
         audio.src = this.currentSong.path
     },
-
+    nextSong: function() {
+        this.currentIndex++
+            if (this.currentIndex >= this.songs.length) {
+                this.currentIndex = 0;
+            }
+        this.loadCurrentSong();
+    },
+    prevSong: function() {
+        this.currentIndex--
+            if (this.currentIndex < 0) {
+                this.currentIndex = 0;
+            }
+        this.loadCurrentSong();
+    },
     start: function() {
         this.defineProperties();
         this.handleEvents();
