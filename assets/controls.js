@@ -9,9 +9,11 @@ const player = $('.player');
 const progress = $('#progress');
 const nextBtn = $('.btn-next');
 const prevBtn = $('.btn-prev')
+const randomBtn = $('.btn-random')
 const app = {
     currentIndex: 0,
     isPlaying: false,
+    isRandom: false,
     songs: [{
             name: "Phố không em",
             singer: "Thái Đinh",
@@ -127,8 +129,29 @@ const app = {
             audio.currentTime = seekTime;
         }
         nextBtn.onclick = function() {
-            _this.nextSong()
+            if (_this.isRandom) {
+                _this.randomSong()
+            } else {
+                _this.nextSong()
+            }
             audio.play();
+        }
+        prevBtn.onclick = function() {
+            if (_this.isRandom) {
+                _this.randomSong()
+            } else {
+                _this.prevSong()
+            }
+
+            audio.play();
+        }
+        randomBtn.onclick = function(e) {
+            _this.isRandom = !_this.isRandom
+            randomBtn.classList.toggle('active', _this.isRandom)
+        }
+
+        audio.onended = function() {
+            nextBtn.click()
         }
     },
     loadCurrentSong: function() {
@@ -150,6 +173,15 @@ const app = {
                 this.currentIndex = 0;
             }
         this.loadCurrentSong();
+    },
+    randomSong: function() {
+        let newIndex
+        do {
+            newIndex = Math.floor(Math.random() * this.songs.length)
+        } while (newIndex === this.currentIndex)
+        this.currentIndex = newIndex
+        this.loadCurrentSong()
+
     },
     start: function() {
         this.defineProperties();
