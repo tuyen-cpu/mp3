@@ -14,7 +14,6 @@ const prevBtn = $('.btn-prev')
 const randomBtn = $('.btn-random')
 const repeatBtn = $('.btn-repeat')
 const playlist = $('.playlist')
-const playPromise = audio.play();
 
 
 const app = {
@@ -26,7 +25,7 @@ const app = {
     songs: [{
             name: "Phố không em",
             singer: "Thái Đinh",
-            path: "https://vnso-zn-5-tf-mp3-s1-zmp3.zadn.vn/03026fe7bba352fd0bb2/9168185496329963561?authen=exp=1641400171~acl=/03026fe7bba352fd0bb2/*~hmac=0f368c7ba228d7f449cc1a58981b3bfb&fs=MTY0MTIyNzM3MTkxNHx3ZWJWNnwwfDExMy4xNjYdUngMjMyLjE4MQ",
+            path: "./assets/audio/phokhongem.mp3",
             image: "https://photo-resize-zmp3.zadn.vn/w240_r1x1_webp/avatars/7/f/7f2fc838a7e08a2060d0626dd759c701_1514516485.jpg"
         },
         {
@@ -115,7 +114,6 @@ const app = {
             if (_this.isPlaying) {
                 audio.pause();
             } else {
-                window.focus()
                 audio.play();
             }
         }
